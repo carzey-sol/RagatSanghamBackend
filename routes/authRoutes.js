@@ -67,9 +67,21 @@ router.post('/login', async (req, res) => {
 
 
 // Protected Route Example
-router.get('/profile', protectRoute, async (req, res) => {
-  const user = await query('SELECT * FROM Users WHERE id = $1', [req.user.id]);
-  res.json(user.rows[0]);
+router.get('/profile/:id', protectRoute, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await query('SELECT Name AS username FROM Users WHERE id = $1', [id]);
+
+    if (user.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json(user.rows[0]);  // Return user with the username
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // Middleware to Protect Routes
