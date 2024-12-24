@@ -1,0 +1,31 @@
+# Dependency directories
+node_modules/
+
+# Optional npm package lock file
+package-lock.json
+
+# dotenv environment variable files
+.env
+
+# npm log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Mac system files
+.DS_Store
+
+# Linux system files
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# IDE or editor-specific files
+.vscode/
+.idea/
+
+# Build output directories
+dist/
+build/
