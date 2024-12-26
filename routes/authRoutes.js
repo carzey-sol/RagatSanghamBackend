@@ -71,7 +71,7 @@ router.get('/profile/:id', protectRoute, async (req, res) => {
   const { id } = req.params;
 
   try {
-    const user = await query('SELECT Name AS username FROM Users WHERE id = $1', [id]);
+    const user = await query('SELECT * FROM Users WHERE id = $1', [id]);
 
     if (user.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
