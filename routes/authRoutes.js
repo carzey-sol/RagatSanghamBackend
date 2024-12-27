@@ -87,21 +87,23 @@ router.get('/profile/:id', protectRoute, async (req, res) => {
       SELECT u.Id AS UserId, u.Name AS UserName, u.Email, u.Phone, u.RoleId,
              d.Id AS DonorId, d.MobileNumber, d.Name AS DonorName
       FROM Users u
-      LEFT JOIN Donors d ON u.Id = d.userid;  -- Remove the WHERE condition to get all rows
+      LEFT JOIN Donors d ON u.Id = d.userid  -- Joining Users and Donors tables
+      WHERE u.Id = $1;  -- Filter by the passed user ID
     `;
 
-    const result = await query(userProfileQuery);
+    const result = await query(userProfileQuery, [id]);
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'No data found' });
+      return res.status(404).json({ error: 'User not found' });
     }
 
-    res.json(result.rows);  // Return all rows from both Users and Donors tables
+    res.json(result.rows[0]);  // Return the user and donor data for the specified userId
   } catch (error) {
     console.error('Error fetching user profile:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 
 
