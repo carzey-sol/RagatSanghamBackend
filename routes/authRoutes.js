@@ -6,6 +6,7 @@ const { query } = require('../db'); // Import the query function from db.js
 const config = require('../config/env');
 
 // Register Route
+// Register Route
 router.post('/register', async (req, res) => {
   const { Name, Email, Password, Phone, RoleId } = req.body;
 
@@ -29,6 +30,14 @@ router.post('/register', async (req, res) => {
     const result = await query(insertQuery, [Name, Email, hashedPassword, Phone, RoleId]);
     const user = result.rows[0];  // Retrieve the inserted user
 
+    // Insert into Donors table
+    const donorInsertQuery = `
+      INSERT INTO Donors (Name, Email, MobileNumber)
+      VALUES ($1, $2, $3);
+    `;
+
+    await query(donorInsertQuery, [Name, Email, Phone]);
+
     // Send success response
     res.status(201).json({ message: 'User registered successfully', user });
   } catch (error) {
@@ -36,6 +45,7 @@ router.post('/register', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 // Login Route
 router.post('/login', async (req, res) => {
