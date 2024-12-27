@@ -84,11 +84,10 @@ router.get('/profile/:id', protectRoute, async (req, res) => {
 
   try {
     const userProfileQuery = `
-      SELECT u.Id AS UserId, u.Name AS UserName, u.Email, u.Phone, u.RoleId,
-       d.Id AS DonorId, d.MobileNumber, d.Name AS DonorName
+     SELECT *
 FROM Users u
-FULL OUTER JOIN Donors d ON u.Id = d.userid  -- Use FULL OUTER JOIN to get all rows from both tables
-WHERE u.id = $1 OR d.userid = $1;  -- Ensure we fetch rows where either userId or donorId matches the given id
+LEFT JOIN Donors d ON u.Id = d.userid
+WHERE u.Id = $1;
     `;
 
     const result = await query(userProfileQuery, [id]);
