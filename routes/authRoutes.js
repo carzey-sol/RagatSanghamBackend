@@ -78,8 +78,7 @@ router.post('/login', async (req, res) => {
 });
 
 
-// Protected Route Example
-// Profile Route
+// Protected Route 
 router.get('/profile/:id', protectRoute, async (req, res) => {
   const { id } = req.params;
 
@@ -88,23 +87,22 @@ router.get('/profile/:id', protectRoute, async (req, res) => {
       SELECT u.Id AS UserId, u.Name AS UserName, u.Email, u.Phone, u.RoleId,
              d.Id AS DonorId, d.MobileNumber, d.Name AS DonorName
       FROM Users u
-      LEFT JOIN Donors d ON u.Id = d.UserId
-      WHERE u.Id = $1;
+      LEFT JOIN Donors d ON u.Id = d.userid;  -- Remove the WHERE condition to get all rows
     `;
 
-    const result = await query(userProfileQuery, [id]);
-    console.log(result)
+    const result = await query(userProfileQuery);
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: 'No data found' });
     }
 
-    res.json(result.rows[0]);  // Return user and donor data
+    res.json(result.rows);  // Return all rows from both Users and Donors tables
   } catch (error) {
     console.error('Error fetching user profile:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 
 // Middleware to Protect Routes
