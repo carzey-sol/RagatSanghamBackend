@@ -93,6 +93,7 @@ router.get('/profile/:id', protectRoute, async (req, res) => {
     `;
 
     const result = await query(userProfileQuery, [id]);
+    console.log(result)
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
