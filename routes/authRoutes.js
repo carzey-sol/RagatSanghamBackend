@@ -7,6 +7,7 @@ const config = require('../config/env');
 
 // Register Route
 // Register Route
+// Register Route
 router.post('/register', async (req, res) => {
   const { Name, Email, Password, Phone, RoleId } = req.body;
 
@@ -20,7 +21,7 @@ router.post('/register', async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(Password, 10);
 
-    // Insert the new user into the database
+    // Insert the new user into the Users table
     const insertQuery = `
       INSERT INTO Users (Name, Email, Password, Phone, RoleId)
       VALUES ($1, $2, $3, $4, $5)
@@ -30,13 +31,13 @@ router.post('/register', async (req, res) => {
     const result = await query(insertQuery, [Name, Email, hashedPassword, Phone, RoleId]);
     const user = result.rows[0];  // Retrieve the inserted user
 
-    // Insert into Donors table
+    // Insert into Donors table with UserId
     const donorInsertQuery = `
-      INSERT INTO Donors (Name, Email, MobileNumber)
-      VALUES ($1, $2, $3);
+      INSERT INTO Donors (Name, Email, MobileNumber, UserId)
+      VALUES ($1, $2, $3, $4);
     `;
 
-    await query(donorInsertQuery, [Name, Email, Phone]);
+    await query(donorInsertQuery, [Name, Email, Phone, user.id]);
 
     // Send success response
     res.status(201).json({ message: 'User registered successfully', user });
@@ -45,6 +46,7 @@ router.post('/register', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 
 // Login Route
