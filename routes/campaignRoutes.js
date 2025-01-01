@@ -24,7 +24,7 @@ function protectRoute(req, res, next) {
 router.get('/campaigns', protectRoute, async (req, res) => {
   try {
     const campaignQuery = `
-      SELECT * FROM Campaigns;  // Adjust with necessary filters or joins as needed
+      SELECT * FROM campaigns;  
     `;
     const result = await query(campaignQuery);
 
