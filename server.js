@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
+const campaignRoutes = require('./routes/campaignRoutes')
 
 app.use(express.json()); // Parse JSON requests
 
@@ -14,7 +15,7 @@ app.use(cors({
 // Use authentication routes
 app.use('/api/auth', authRoutes);
 app.use('/api', authRoutes);
-app.use('/api', campaignsRoutes);
+app.use('/api', campaignRoutes);
 
 // Set the server to listen on a port
 const PORT = process.env.PORT || 5000;
