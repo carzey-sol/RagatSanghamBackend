@@ -14,6 +14,7 @@ app.use(cors({
 // Use authentication routes
 app.use('/api/auth', authRoutes);
 app.use('/api', authRoutes);
+app.use('/api', campaignsRoutes);
 
 // Set the server to listen on a port
 const PORT = process.env.PORT || 5000;
