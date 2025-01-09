@@ -19,8 +19,8 @@ app.use('/api', authRoutes);
 app.use('/api', campaignRoutes);
 app.use('/api/branches', branchRoutes);
 
-// Set the server to listen on a port
-const PORT = process.env.PORT || 5000;
+// Set the server to listen on a port 
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
