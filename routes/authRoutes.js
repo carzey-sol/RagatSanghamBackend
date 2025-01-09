@@ -85,14 +85,13 @@ router.get('/profile/:id', protectRoute, async (req, res) => {
   try {
     const userProfileQuery = `
       SELECT 
-  u.*,
-  d.*,
-  r.name AS employee_type
-FROM Users u
-LEFT JOIN Donors d ON u.Id = d.userid
-LEFT JOIN Roles r ON u.roleid = r.id
-WHERE u.Id = $1;
-
+        u.*,
+        d.*,
+        r.name AS employee_type
+      FROM Users u
+      LEFT JOIN Donors d ON u.Id = d.userid
+      LEFT JOIN Roles r ON u.roleid = r.id
+      WHERE u.Id = $1;
     `;
 
     const result = await query(userProfileQuery, [id]);
@@ -107,8 +106,6 @@ WHERE u.Id = $1;
     res.status(500).json({ error: 'Server error' });
   }
 });
-
-
 
 
 // Middleware to Protect Routes
