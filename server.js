@@ -3,6 +3,7 @@ const app = express();
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const campaignRoutes = require('./routes/campaignRoutes')
+const branchRoutes = require('./routes/branchRoutes');
 
 app.use(express.json()); 
 
@@ -16,6 +17,7 @@ app.use(cors({
 app.use('/api/auth', authRoutes);
 app.use('/api', authRoutes);
 app.use('/api', campaignRoutes);
+app.use('/api/branches', branchRoutes);
 
 // Set the server to listen on a port
 const PORT = process.env.PORT || 5000;
