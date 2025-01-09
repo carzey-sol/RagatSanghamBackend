@@ -27,7 +27,7 @@ router.post('/register', async (req, res) => {
       VALUES ($1, $2, $3, $4, $5)
       RETURNING *;
     `;
-    
+
     const result = await query(insertQuery, [Name, Email, hashedPassword, Phone, RoleId]);
     const user = result.rows[0];  // Retrieve the inserted user
 
@@ -67,10 +67,10 @@ router.post('/login', async (req, res) => {
     const token = jwt.sign({ id: user.rows[0].id }, config.jwtSecret, { expiresIn: '10h' });
 
     // Send token and user info (including role)
-    res.json({ 
-      message: 'Login successful', 
-      token, 
-      user: { id: user.rows[0].id, RoleId: user.rows[0].roleid } 
+    res.json({
+      message: 'Login successful',
+      token,
+      user: { id: user.rows[0].id, RoleId: user.rows[0].roleid }
     });
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
@@ -85,13 +85,14 @@ router.get('/profile/:id', protectRoute, async (req, res) => {
   try {
     const userProfileQuery = `
       SELECT 
-        u.*,
-        d.*,
-        r.role_name AS employee_type
-      FROM Users u
-      LEFT JOIN Donors d ON u.Id = d.userid
-      LEFT JOIN Roles r ON u.employee_id = r.employee_id
-      WHERE u.Id = $1;
+  u.*,
+  d.*,
+  r.name AS employee_type
+FROM Users u
+LEFT JOIN Donors d ON u.Id = d.userid
+LEFT JOIN Roles r ON u.roleid = r.id
+WHERE u.Id = 10;
+
     `;
 
     const result = await query(userProfileQuery, [id]);
