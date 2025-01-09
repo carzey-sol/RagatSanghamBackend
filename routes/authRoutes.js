@@ -84,10 +84,14 @@ router.get('/profile/:id', protectRoute, async (req, res) => {
 
   try {
     const userProfileQuery = `
-     SELECT *
-FROM Users u
-LEFT JOIN Donors d ON u.Id = d.userid
-WHERE u.Id = $1;
+      SELECT 
+        u.*,
+        d.*,
+        r.role_name AS employee_type
+      FROM Users u
+      LEFT JOIN Donors d ON u.Id = d.userid
+      LEFT JOIN Roles r ON u.employee_id = r.employee_id
+      WHERE u.Id = $1;
     `;
 
     const result = await query(userProfileQuery, [id]);
@@ -96,7 +100,7 @@ WHERE u.Id = $1;
       return res.status(404).json({ error: 'User not found' });
     }
 
-    res.json(result.rows[0]);  // Return the combined user and donor data
+    res.json(result.rows[0]); // Return the combined user, donor, and role data
   } catch (error) {
     console.error('Error fetching user profile:', error);
     res.status(500).json({ error: 'Server error' });

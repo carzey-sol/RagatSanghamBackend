@@ -4,7 +4,7 @@ const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const campaignRoutes = require('./routes/campaignRoutes')
 
-app.use(express.json()); // Parse JSON requests
+app.use(express.json()); 
 
 app.use(cors({
   origin: '*',  // Allow all origins (or specify certain domains)
