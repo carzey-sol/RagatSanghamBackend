@@ -84,6 +84,31 @@ router.put('/:id', protectRoute, async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+//patch
+router.patch('/:id/status', protectRoute, async (req, res) => {
+  const { id } = req.params;
+  const { isActive } = req.body; // Expecting the 'isActive' status to be toggled in the request body
+
+  try {
+    // Toggle the status in the database
+    const updateStatusQuery = `
+      UPDATE Branches
+      SET status = $1
+      WHERE branchid = $2
+      RETURNING *;
+    `;
+    const result = await query(updateStatusQuery, [isActive, id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Branch not found' });
+    }
+
+    res.json(result.rows[0]); // Return the updated branch with the new status
+  } catch (error) {
+    console.error('Error updating branch status:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 // Delete a branch
 router.delete(':id', protectRoute, async (req, res) => {
