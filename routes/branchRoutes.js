@@ -24,13 +24,13 @@ function protectRoute(req, res, next) {
 router.get('/', protectRoute, async (req, res) => {
   try {
     const branchesQuery = `SELECT 
-  b.*, 
-  p.name AS province_name 
-FROM 
-  Branches b
-LEFT JOIN 
-  Provinces p ON b.provinceid = p.id;
-`;
+      b.*, 
+      p.name AS province_name 
+    FROM 
+      Branches b
+    LEFT JOIN 
+      Provinces p ON b.provinceid = p.id;`;
+
     const result = await query(branchesQuery);
 
     res.json(result.rows); // Return all branch data
@@ -84,13 +84,13 @@ router.put('/:id', protectRoute, async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
-//patch
+
+// Update branch status (PATCH)
 router.patch('/:id/status', protectRoute, async (req, res) => {
   const { id } = req.params;
   const { isActive } = req.body; // Expecting the 'isActive' status to be toggled in the request body
 
   try {
-    // Toggle the status in the database
     const updateStatusQuery = `
       UPDATE Branches
       SET status = $1
@@ -111,7 +111,7 @@ router.patch('/:id/status', protectRoute, async (req, res) => {
 });
 
 // Delete a branch
-router.delete(':id', protectRoute, async (req, res) => {
+router.delete('/:id', protectRoute, async (req, res) => {
   const { id } = req.params;
 
   try {
