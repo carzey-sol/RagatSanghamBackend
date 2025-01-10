@@ -86,7 +86,7 @@ router.put('/:id', protectRoute, async (req, res) => {
 });
 
 // Update branch status (PATCH)
-router.put(':id/status', async (req, res) => {
+router.put('/:id/status', protectRoute, async (req, res) => { // Apply the middleware here
   const { id } = req.params;
   const { status } = req.body;
 
@@ -99,8 +99,8 @@ router.put(':id/status', async (req, res) => {
   }
 
   try {
-      const result = await pool.query(
-          'UPDATE branches SET status = $1 WHERE id = $2 RETURNING *',
+      const result = await query(
+          'UPDATE Branches SET status = $1 WHERE branchid = $2 RETURNING *', // Ensure the correct column name
           [status, id]
       );
 
@@ -108,12 +108,13 @@ router.put(':id/status', async (req, res) => {
           return res.status(404).json({ message: 'Branch not found' });
       }
 
-      res.json({ message: 'Branch status updated successfully' });
+      res.json({ message: 'Branch status updated successfully', branch: result.rows[0] }); // Return the updated branch
   } catch (err) {
       console.error('Error updating branch status:', err.message);
       res.status(500).json({ message: 'Internal server error' });
   }
 });
+
 // Delete a branch
 router.delete('/:id', protectRoute, async (req, res) => {
   const { id } = req.params;
