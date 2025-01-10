@@ -86,22 +86,19 @@ router.put('/:id', protectRoute, async (req, res) => {
 });
 
 // Update branch status (PATCH)
-router.patch('/api/branches/:id/status', async (req, res) => {
+router.put('/api/branches/:id/status', async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
 
-  // Ensure id is a valid number
+  // Validate id and status
   if (isNaN(id)) {
       return res.status(400).json({ message: 'Invalid branch ID' });
   }
-
-  // Ensure status is valid
   if (status !== 'active' && status !== 'inactive') {
       return res.status(400).json({ message: 'Invalid status value' });
   }
 
   try {
-      // Proceed with your database query
       const result = await pool.query(
           'UPDATE branches SET status = $1 WHERE id = $2 RETURNING *',
           [status, id]
