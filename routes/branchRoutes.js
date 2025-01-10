@@ -86,7 +86,7 @@ router.put('/:id', protectRoute, async (req, res) => {
 });
 
 // Update branch status (PATCH)
-app.patch('/api/branches/:id/status', async (req, res) => {
+router.patch('/api/branches/:id/status', async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
 
