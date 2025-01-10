@@ -21,7 +21,7 @@ function protectRoute(req, res, next) {
 }
 
 // Get all branches
-router.get('/branches', protectRoute, async (req, res) => {
+router.get('/', protectRoute, async (req, res) => {
   try {
     const branchesQuery = `SELECT * FROM Branches;`;
     const result = await query(branchesQuery);
@@ -34,7 +34,7 @@ router.get('/branches', protectRoute, async (req, res) => {
 });
 
 // Add a new branch
-router.post('/branches', protectRoute, async (req, res) => {
+router.post('/', protectRoute, async (req, res) => {
   const { branchname, location, province_id, status } = req.body;
   const createdbyid = req.user.id; // Use user ID from the token
 
@@ -54,7 +54,7 @@ router.post('/branches', protectRoute, async (req, res) => {
 });
 
 // Edit an existing branch
-router.put('/branches/:id', protectRoute, async (req, res) => {
+router.put('/:id', protectRoute, async (req, res) => {
   const { id } = req.params;
   const { branchname, location, province_id, status } = req.body;
 
@@ -79,7 +79,7 @@ router.put('/branches/:id', protectRoute, async (req, res) => {
 });
 
 // Delete a branch
-router.delete('/branches/:id', protectRoute, async (req, res) => {
+router.delete(':id', protectRoute, async (req, res) => {
   const { id } = req.params;
 
   try {
