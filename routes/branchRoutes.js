@@ -23,7 +23,14 @@ function protectRoute(req, res, next) {
 // Get all branches
 router.get('/', protectRoute, async (req, res) => {
   try {
-    const branchesQuery = `SELECT * FROM Branches;`;
+    const branchesQuery = `SELECT 
+  b.*, 
+  p.name AS province_name 
+FROM 
+  Branches b
+LEFT JOIN 
+  Provinces p ON b.provinceid = p.id;
+`;
     const result = await query(branchesQuery);
 
     res.json(result.rows); // Return all branch data
