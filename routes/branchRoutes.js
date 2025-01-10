@@ -88,7 +88,12 @@ router.put('/:id', protectRoute, async (req, res) => {
 // Update branch status (PATCH)
 router.patch('/:id/status', protectRoute, async (req, res) => {
   const { id } = req.params;
-  const { isActive } = req.body; // Expecting the 'isActive' status to be toggled in the request body
+  const { status } = req.body; // status should be 'active' or 'inactive'
+
+  // Check if the status is either 'active' or 'inactive'
+  if (status !== 'active' && status !== 'inactive') {
+    return res.status(400).json({ error: 'Invalid status value. It should be "active" or "inactive".' });
+  }
 
   try {
     const updateStatusQuery = `
@@ -97,7 +102,7 @@ router.patch('/:id/status', protectRoute, async (req, res) => {
       WHERE branchid = $2
       RETURNING *;
     `;
-    const result = await query(updateStatusQuery, [isActive, id]);
+    const result = await query(updateStatusQuery, [status, id]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Branch not found' });
