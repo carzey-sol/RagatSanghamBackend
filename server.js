@@ -4,11 +4,12 @@ const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const campaignRoutes = require('./routes/campaignRoutes');
 const branchRoutes = require('./routes/branchRoutes');
+require('dotenv').config(); // Optional for environment variable management
 
 app.use(express.json());
 
 app.use(cors({
-  origin: '*',  // Specify your frontend URL here
+  origin: '*',  // Consider restricting this for production
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
