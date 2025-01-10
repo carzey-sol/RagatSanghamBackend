@@ -1,21 +1,21 @@
+// server.js
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const authRoutes = require('./routes/authRoutes');
+const { router: authRoutes } = require('./routes/authRoutes');  // Correct import for the authRoutes
 const campaignRoutes = require('./routes/campaignRoutes');
 const branchRoutes = require('./routes/branchRoutes');
-require('dotenv').config(); // Optional for environment variable management
 
 app.use(express.json());
 
 app.use(cors({
-  origin: '*',  // Consider restricting this for production
+  origin: '*',  // Specify your frontend URL here
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 // Use authentication routes
-app.use('/api/auth', authRoutes); // Register authRoutes once under /api/auth
+app.use('/api/auth', authRoutes); // Register authRoutes under /api/auth
 app.use('/api', campaignRoutes);  // Register campaign routes
 app.use('/api/branches', branchRoutes); // Register branch routes
 
