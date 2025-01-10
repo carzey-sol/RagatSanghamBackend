@@ -86,35 +86,37 @@ router.put('/:id', protectRoute, async (req, res) => {
 });
 
 // Update branch status (PATCH)
-router.patch('/:id/status', protectRoute, async (req, res) => {
+app.patch('/api/branches/:id/status', async (req, res) => {
   const { id } = req.params;
-  const { status } = req.body; // status should be 'active' or 'inactive'
+  const { status } = req.body;
 
-  // Check if the status is either 'active' or 'inactive'
+  // Ensure id is a valid number
+  if (isNaN(id)) {
+      return res.status(400).json({ message: 'Invalid branch ID' });
+  }
+
+  // Ensure status is valid
   if (status !== 'active' && status !== 'inactive') {
-    return res.status(400).json({ error: 'Invalid status value. It should be "active" or "inactive".' });
+      return res.status(400).json({ message: 'Invalid status value' });
   }
 
   try {
-    const updateStatusQuery = `
-      UPDATE Branches
-      SET status = $1
-      WHERE branchid = $2
-      RETURNING *;
-    `;
-    const result = await query(updateStatusQuery, [status, id]);
+      // Proceed with your database query
+      const result = await pool.query(
+          'UPDATE branches SET status = $1 WHERE id = $2 RETURNING *',
+          [status, id]
+      );
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Branch not found' });
-    }
+      if (result.rows.length === 0) {
+          return res.status(404).json({ message: 'Branch not found' });
+      }
 
-    res.json(result.rows[0]); // Return the updated branch with the new status
-  } catch (error) {
-    console.error('Error updating branch status:', error);
-    res.status(500).json({ error: 'Server error' });
+      res.json({ message: 'Branch status updated successfully' });
+  } catch (err) {
+      console.error('Error updating branch status:', err.message);
+      res.status(500).json({ message: 'Internal server error' });
   }
 });
-
 // Delete a branch
 router.delete('/:id', protectRoute, async (req, res) => {
   const { id } = req.params;
