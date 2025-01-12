@@ -42,7 +42,7 @@ router.get('/', protectRoute, async (req, res) => {
 
 // Add a new branch
 router.post('/', protectRoute, async (req, res) => {
-  const { branchname, location, province_id, status } = req.body;
+  const { branchname, location, provinceid, status } = req.body;
   const createdbyid = req.user.id; // Use user ID from the token
 
   try {
