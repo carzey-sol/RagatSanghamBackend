@@ -47,7 +47,7 @@ router.post('/', protectRoute, async (req, res) => {
 
   try {
     const addBranchQuery = `
-      INSERT INTO Branches (branchname, location, provinceid, createdbyid, createddate, status)
+      INSERT INTO Branches (branchname, location, provinceid, createdbyid, createddate, status, provinceid)
       VALUES ($1, $2, $3, $4, NOW(), $5)
       RETURNING *;
     `;
