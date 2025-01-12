@@ -47,11 +47,11 @@ router.post('/', protectRoute, async (req, res) => {
 
   try {
     const addBranchQuery = `
-      INSERT INTO Branches (branchname, location, province_id, createdbyid, createddate, status)
+      INSERT INTO Branches (branchname, location, provinceid, createdbyid, createddate, status)
       VALUES ($1, $2, $3, $4, NOW(), $5)
       RETURNING *;
     `;
-    const result = await query(addBranchQuery, [branchname, location, province_id, createdbyid, status]);
+    const result = await query(addBranchQuery, [branchname, location, provinceid, createdbyid, status]);
 
     res.status(201).json(result.rows[0]); // Return the newly added branch
   } catch (error) {
