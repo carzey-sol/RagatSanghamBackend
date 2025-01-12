@@ -61,7 +61,7 @@ router.post('/', async (req, res) => {
       RETURNING *;
     `;
 
-    const result = await query(addBranchQuery, [branchname, location, provinceid, createdbyid, status]);
+    const result = await query(addBranchQuery, [branchname, location, provinceid, status, createdbyid]);
 
     if (result.rows.length === 0) {
       throw new Error('Branch creation failed. No rows were returned.');
