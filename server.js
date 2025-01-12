@@ -6,6 +6,7 @@ const { router: authRoutes } = require('./routes/authRoutes');  // Correct impor
 const campaignRoutes = require('./routes/campaignRoutes');
 const branchRoutes = require('./routes/branchRoutes');
 const profileRoutes = require('./routes/profileRoutes');
+const provinceRoutes = require('./routes/provinceRoutes'); 
 
 app.use(express.json());
 
@@ -20,6 +21,7 @@ app.use('/api/auth', authRoutes); // Register authRoutes under /api/auth
 app.use('/api', campaignRoutes);  // Register campaign routes
 app.use('/api/branches', branchRoutes);
 app.use('/api/profile', profileRoutes); // Register branch routes
+app.use('/api/provinces', provinceRoutes);
 
 // Global error handler
 app.use((err, req, res, next) => {
