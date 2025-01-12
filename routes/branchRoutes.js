@@ -41,19 +41,17 @@ router.get('/', protectRoute, async (req, res) => {
 });
 
 // Add a new branch
-router.post('/', protectRoute, async (req, res) => {
-  const { branchname, location, provinceid, status } = req.body;
+router.post('/', async (req, res) => {
+  const { branchname, location, provinceid, status, createdbyid } = req.body;
 
-  // Check if req.user exists and has an id (this should be set by the protectRoute middleware)
-  if (!req.user || !req.user.id) {
-    return res.status(401).json({ error: 'User not authenticated. Please log in.' });
+  // Input validation for required fields
+  if (!branchname || !location || !provinceid || typeof status === 'undefined' || !createdbyid) {
+    return res.status(400).json({ error: 'All fields are required: branchname, location, provinceid, status, and createdbyid.' });
   }
 
-  const createdbyid = req.user.id;
-
-  // Input validation
-  if (!branchname || !location || !provinceid || typeof status === 'undefined') {
-    return res.status(400).json({ error: 'All fields are required: branchname, location, provinceid, and status.' });
+  // Input validation for user id (createdbyid)
+  if (typeof createdbyid !== 'number') {
+    return res.status(400).json({ error: 'Invalid user ID.' });
   }
 
   try {
@@ -84,7 +82,6 @@ router.post('/', protectRoute, async (req, res) => {
     }
   }
 });
-
 
 
 // Edit an existing branch
