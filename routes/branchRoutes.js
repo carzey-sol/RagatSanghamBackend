@@ -44,7 +44,7 @@ router.get('/', protectRoute, async (req, res) => {
 
 router.post('/', protectRoute, async (req, res) => {
   const { branchname, location, provinceid, status } = req.body;
-  const createdbyid = req.user.id; // Use user ID from the token
+  const createdbyid = req.user.id; // Ensure `req.user.id` is correctly populated by the middleware.
 
   // Input validation
   if (!branchname || !location || !provinceid || typeof status === 'undefined') {
@@ -68,17 +68,18 @@ router.post('/', protectRoute, async (req, res) => {
   } catch (error) {
     console.error('Error adding branch:', error);
 
-    // Database constraint errors (e.g., unique violations)
+    // Handle specific database error codes
     if (error.code === '23505') {
       res.status(409).json({ error: 'A branch with the same details already exists.' });
     } else if (error.code === '23503') {
       res.status(400).json({ error: 'Invalid province ID. Please provide a valid province.' });
     } else {
-      // Generic server error
+      // Handle unexpected errors
       res.status(500).json({ error: 'An unexpected server error occurred.' });
     }
   }
 });
+
 
 
 // Edit an existing branch
