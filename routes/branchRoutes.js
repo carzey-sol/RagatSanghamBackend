@@ -41,10 +41,15 @@ router.get('/', protectRoute, async (req, res) => {
 });
 
 // Add a new branch
-
 router.post('/', protectRoute, async (req, res) => {
   const { branchname, location, provinceid, status } = req.body;
-  const createdbyid = req.user.id; // Ensure `req.user.id` is correctly populated by the middleware.
+
+  // Check if req.user exists and has an id (this should be set by the protectRoute middleware)
+  if (!req.user || !req.user.id) {
+    return res.status(401).json({ error: 'User not authenticated. Please log in.' });
+  }
+
+  const createdbyid = req.user.id;
 
   // Input validation
   if (!branchname || !location || !provinceid || typeof status === 'undefined') {
