@@ -41,24 +41,45 @@ router.get('/', protectRoute, async (req, res) => {
 });
 
 // Add a new branch
+
 router.post('/', protectRoute, async (req, res) => {
   const { branchname, location, provinceid, status } = req.body;
   const createdbyid = req.user.id; // Use user ID from the token
 
+  // Input validation
+  if (!branchname || !location || !provinceid || typeof status === 'undefined') {
+    return res.status(400).json({ error: 'All fields are required: branchname, location, provinceid, and status.' });
+  }
+
   try {
     const addBranchQuery = `
-      INSERT INTO Branches (branchname, location, provinceid, createdbyid, createddate, status, provinceid)
+      INSERT INTO Branches (branchname, location, provinceid, createdbyid, createddate, status)
       VALUES ($1, $2, $3, $4, NOW(), $5)
       RETURNING *;
     `;
+
     const result = await query(addBranchQuery, [branchname, location, provinceid, createdbyid, status]);
 
-    res.status(201).json(result.rows[0]); // Return the newly added branch
+    if (result.rows.length === 0) {
+      throw new Error('Branch creation failed. No rows were returned.');
+    }
+
+    res.status(201).json({ message: 'Branch created successfully!', branch: result.rows[0] });
   } catch (error) {
     console.error('Error adding branch:', error);
-    res.status(500).json({ error: 'Server error' });
+
+    // Database constraint errors (e.g., unique violations)
+    if (error.code === '23505') {
+      res.status(409).json({ error: 'A branch with the same details already exists.' });
+    } else if (error.code === '23503') {
+      res.status(400).json({ error: 'Invalid province ID. Please provide a valid province.' });
+    } else {
+      // Generic server error
+      res.status(500).json({ error: 'An unexpected server error occurred.' });
+    }
   }
 });
+
 
 // Edit an existing branch
 router.put('/:id', protectRoute, async (req, res) => {
