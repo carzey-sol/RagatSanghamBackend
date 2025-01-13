@@ -89,7 +89,7 @@ router.post('/', protectRoute, async (req, res) => {
 // Edit an existing branch
 router.put('/:id', protectRoute, async (req, res) => {
   const { id } = req.params;
-  const { branchname, location, province_id, status } = req.body;
+  const { branchname, location, provinceid, status } = req.body; // Changed province_id to provinceid
 
   try {
     const updateBranchQuery = `
@@ -98,7 +98,7 @@ router.put('/:id', protectRoute, async (req, res) => {
       WHERE branchid = $5
       RETURNING *;
     `;
-    const result = await query(updateBranchQuery, [branchname, location, province_id, status, id]);
+    const result = await query(updateBranchQuery, [branchname, location, provinceid, status, id]); // Use provinceid
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Branch not found' });
