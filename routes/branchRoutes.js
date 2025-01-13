@@ -41,7 +41,7 @@ router.get('/', protectRoute, async (req, res) => {
 });
 
 // Add a new branch
-router.post('/', async (req, res) => {
+router.post('/', protectRoute, async (req, res) => {
   const { branchname, location, provinceid, status, createdbyid } = req.body;
 
   // Input validation for required fields
