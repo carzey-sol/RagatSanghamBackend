@@ -56,9 +56,9 @@ router.post('/', async (req, res) => {
 
   try {
     const addBranchQuery = `
-      INSERT INTO Branches (branchname, location, provinceid, status, createdbyid, createddate)
+      INSERT INTO branches (branchname, location, provinceid, status, createdbyid, createddate)
       VALUES ($1, $2, $3, $4, $5, NOW())
-      RETURNING *;
+      RETURNING branchid, branchname, location, provinceid, status, createdbyid, createddate;
     `;
 
     const result = await query(addBranchQuery, [branchname, location, provinceid, status, createdbyid]);
