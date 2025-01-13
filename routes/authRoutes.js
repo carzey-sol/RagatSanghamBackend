@@ -70,7 +70,9 @@ router.post('/login', async (req, res) => {
       user: { id: user.rows[0].id, RoleId: user.rows[0].roleid }
     });
   } catch (error) {
+    console.log('Error in login:', error);
     res.status(500).json({ error: 'Server error' });
+    
   }
 });
 
