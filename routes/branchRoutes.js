@@ -93,7 +93,7 @@ router.put('/:id', protectRoute, async (req, res) => {
   try {
     const updateBranchQuery = `
       UPDATE Branches
-      SET branchname = $1, location = $2, provinceid = $3, status = $4, createddate = NOW()  // Use provinceid here
+      SET branchname = $1, location = $2, provinceid = $3, status = $4, createddate = NOW()  
       WHERE branchid = $5
       RETURNING *;
     `;
