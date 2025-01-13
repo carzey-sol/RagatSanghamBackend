@@ -56,8 +56,8 @@ router.post('/', async (req, res) => {
 
   try {
     const addBranchQuery = `
-      INSERT INTO Branches (branchname, location, provinceid, createdbyid, createddate, status)
-      VALUES ($1, $2, $3, $4, NOW(), $5)
+      INSERT INTO Branches (branchname, location, provinceid, status, createdbyid, createddate)
+      VALUES ($1, $2, $3, $4, $5, NOW())
       RETURNING *;
     `;
 
@@ -82,6 +82,7 @@ router.post('/', async (req, res) => {
     }
   }
 });
+
 
 
 // Edit an existing branch
