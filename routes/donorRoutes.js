@@ -20,10 +20,25 @@ router.get('/:id', protectRoute, async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await query('SELECT * FROM Donors WHERE id = $1', [id]);
+    // Query to fetch donor details, ensuring that the roleid is 5 and including the blood type name
+    const result = await query(`
+      SELECT 
+        d.id AS donor_id,
+        d.donorName,
+        d.bloodType,
+        bt.name AS bloodTypeName,
+        u.roleid
+      FROM Donors d
+      JOIN bloodtypes bt ON d.bloodType = bt.id
+      JOIN Users u ON u.id = d.userId
+      WHERE d.id = $1 AND u.roleid = 5
+    `, [id]);
+
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Donor not found' });
+      return res.status(404).json({ error: 'Donor not found or user is not authorized (roleid is not 5)' });
     }
+
+    // Return the donor data along with the blood type name and roleid
     res.status(200).json(result.rows[0]);
   } catch (error) {
     console.error('Error fetching donor:', error);
