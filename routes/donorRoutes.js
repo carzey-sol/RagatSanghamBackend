@@ -23,15 +23,16 @@ router.get('/:id', protectRoute, async (req, res) => {
     // Query to fetch donor details, ensuring that the roleid is 5 and including the blood type name
     const result = await query(`
       SELECT 
-        d.id AS donor_id,
-        d.donorName,
-        d.bloodType,
-        bt.name AS bloodTypeName,
-        u.roleid
-      FROM Donors d
-      JOIN bloodtypes bt ON d.bloodType = bt.id
-      JOIN Users u ON u.id = d.userId
-      WHERE d.id = $1 AND u.roleid = 5
+    d.*,        
+    d.name,                 
+    d.bloodtypeid,          
+    bt.name AS bloodTypeName, 
+    u.roleid                
+FROM Donors d
+JOIN bloodtypes bt ON d.bloodtypeid = bt.id
+JOIN Users u ON u.id = d.userId             
+WHERE u.roleid = 5;                        
+
     `, [id]);
 
     if (result.rows.length === 0) {
