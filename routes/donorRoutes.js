@@ -16,6 +16,7 @@ router.get('/', protectRoute, async (req, res) => {
   JOIN bloodtypes bt ON d.bloodtypeid = bt.id
   JOIN Users u ON u.id = d.userId             
   WHERE u.roleid = 5; `);
+  console.log(res.json(result.rows));
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error fetching donors:', error);
