@@ -7,7 +7,15 @@ const router = express.Router();
 // Get all donors
 router.get('/', protectRoute, async (req, res) => {
   try {
-    const result = await query('SELECT * FROM Donors');
+    const result = await query(`
+      SELECT 
+    d.*,        
+    bt.name AS bloodTypeName, 
+    u.roleid                
+  FROM Donors d
+  JOIN bloodtypes bt ON d.bloodtypeid = bt.id
+  JOIN Users u ON u.id = d.userId             
+  WHERE u.roleid = 5; `);
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error fetching donors:', error);
@@ -15,37 +23,6 @@ router.get('/', protectRoute, async (req, res) => {
   }
 });
 
-// Get a specific donor by ID
-router.get('/', protectRoute, async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    // Query to fetch donor details, ensuring that the roleid is 5 and including the blood type name
-    const result = await query(`
-      SELECT 
-    d.*,        
-    d.name,                 
-    d.bloodtypeid,          
-    bt.name AS bloodTypeName, 
-    u.roleid                
-FROM Donors d
-JOIN bloodtypes bt ON d.bloodtypeid = bt.id
-JOIN Users u ON u.id = d.userId             
-WHERE u.roleid = 5;                        
-
-    `);
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Donor not found or user is not authorized (roleid is not 5)' });
-    }
-
-    // Return the donor data along with the blood type name and roleid
-    res.status(200).json(result.rows[0]);
-  } catch (error) {
-    console.error('Error fetching donor:', error);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
 
 // Add a new donor
 router.post('/', protectRoute, async (req, res) => {
