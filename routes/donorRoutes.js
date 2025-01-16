@@ -16,7 +16,7 @@ router.get('/', protectRoute, async (req, res) => {
 });
 
 // Get a specific donor by ID
-router.get('/:id', protectRoute, async (req, res) => {
+router.get('/', protectRoute, async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -33,7 +33,7 @@ JOIN bloodtypes bt ON d.bloodtypeid = bt.id
 JOIN Users u ON u.id = d.userId             
 WHERE u.roleid = 5;                        
 
-    `, [id]);
+    `);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Donor not found or user is not authorized (roleid is not 5)' });
