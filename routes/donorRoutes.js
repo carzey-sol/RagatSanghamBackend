@@ -67,21 +67,22 @@ router.post('/', protectRoute, upload.single('profileImage'), async (req, res) =
 
     // Step 3: Insert data into Donors table, excluding fields already inserted in Users table
     const insertDonorQuery = `
-      INSERT INTO Donors (temporaryaddress, permanentaddress, mobilenumber, secondarynumber, status, bloodtypeid, profileimage, userid)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *;
-    `;
-    const donorResult = await query(insertDonorQuery, [
-      temporaryaddress, // Only fields specific to Donors
-      permanentaddress,
-      mobilenumber,
-      secondarynumber,
-      status,
-      bloodType,
-      cloudinaryImageUrl || profileImage, // Use the Cloudinary URL or Multer path
-      userId, // Associate the userId from the Users table
-    ]);
+  INSERT INTO Donors (name, temporaryaddress, permanentaddress, mobilenumber, secondarynumber, status, bloodtypeid, profileimage, userid)
+  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *;
+`;
+const donorResult = await query(insertDonorQuery, [
+  donorName, // Insert the donorName into the Donors table as well
+  temporaryaddress, // Only fields specific to Donors
+  permanentaddress,
+  mobilenumber,
+  secondarynumber,
+  status,
+  bloodType,
+  cloudinaryImageUrl || profileImage, // Use the Cloudinary URL or Multer path
+  userId, // Associate the userId from the Users table
+]);
 
-    res.status(201).json(donorResult.rows[0]);  // Return the donor information with associated userId
+res.status(201).json(donorResult.rows[0]); // Return the donor information with associated userId
   } catch (error) {
     console.error('Error creating donor:', error);
     res.status(500).json({ error: 'Server error' });
