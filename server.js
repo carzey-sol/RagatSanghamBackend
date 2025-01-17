@@ -8,6 +8,7 @@ const branchRoutes = require('./routes/branchRoutes');
 const profileRoutes = require('./routes/profileRoutes');
 const provinceRoutes = require('./routes/provinceRoutes'); 
 const donorRoutes = require('./routes/donorRoutes');
+const bloodTypeRoutes = require('./routes/bloodTypeRoutes');
 
 app.use(express.json());
 
@@ -24,6 +25,7 @@ app.use('/api/branches', branchRoutes);
 app.use('/api/profile', profileRoutes); // Register branch routes
 app.use('/api/provinces', provinceRoutes);
 app.use('/api/donors', donorRoutes);
+app.use('/api/bloodtypes', bloodTypeRoutes);
 
 // Global error handler
 app.use((err, req, res, next) => {
