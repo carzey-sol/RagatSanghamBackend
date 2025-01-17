@@ -67,7 +67,7 @@ router.post('/', protectRoute, upload.single('profileImage'), async (req, res) =
 
     // Step 3: Insert data into Donors table, excluding fields already inserted in Users table
     const insertDonorQuery = `
-      INSERT INTO Donors (temporaryaddress, permanentaddress, mobilenumber, secondarynumber, status, bloodType, profileImage, userid)
+      INSERT INTO Donors (temporaryaddress, permanentaddress, mobilenumber, secondarynumber, status, bloodtypeid, profileimage, userid)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *;
     `;
     const donorResult = await query(insertDonorQuery, [
