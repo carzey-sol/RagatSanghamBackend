@@ -28,11 +28,27 @@ router.get('/', protectRoute, async (req, res) => {
 
 // Add a new donor
 router.post('/', protectRoute, upload.single('profileImage'), async (req, res) => {
-  const { donorName, tempAddress, mobileNumber, secondaryNumber, email, status, bloodType, userId } = req.body;
+  const { donorName, temporaryaddress, permanentaddress, mobilenumber, secondarynumber, email, status, bloodType } = req.body;
+
   const profileImage = req.file ? req.file.path : null; // Image from Multer
 
   try {
-    // Upload image to Cloudinary if a file is provided
+    // Step 1: Insert data into Users table with a default password "password"
+    const insertUserQuery = `
+      INSERT INTO Users (name, email, password, phone, roleid)
+      VALUES ($1, $2, $3, $4, $5) RETURNING id;
+    `;
+    const userResult = await query(insertUserQuery, [
+      donorName,
+      email,
+      'password', // Default password set to "password"
+      mobilenumber, // Primary phone number
+      5, // Role ID for donors
+    ]);
+
+    const userId = userResult.rows[0].id; // Retrieve the userId generated for the new user
+
+    // Step 2: Upload image to Cloudinary if a file is provided
     let cloudinaryImageUrl = null;
     if (profileImage) {
       const cloudinaryResponse = await new Promise((resolve, reject) => {
@@ -49,24 +65,23 @@ router.post('/', protectRoute, upload.single('profileImage'), async (req, res) =
       cloudinaryImageUrl = cloudinaryResponse.secure_url; // Get the secure image URL from Cloudinary
     }
 
-    // Insert the donor data into the database
-    const insertQuery = `
-      INSERT INTO Donors (donorName, tempAddress, mobileNumber, secondaryNumber, email, status, bloodType, profileImage, userId)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *;
+    // Step 3: Insert data into Donors table, excluding fields already inserted in Users table
+    const insertDonorQuery = `
+      INSERT INTO Donors (temporaryaddress, permanentaddress, mobilenumber, secondarynumber, status, bloodType, profileImage, userid)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *;
     `;
-    const result = await query(insertQuery, [
-      donorName,
-      tempAddress,
-      mobileNumber,
-      secondaryNumber,
-      email,
+    const donorResult = await query(insertDonorQuery, [
+      temporaryaddress, // Only fields specific to Donors
+      permanentaddress,
+      mobilenumber,
+      secondarynumber,
       status,
       bloodType,
-      cloudinaryImageUrl || profileImage, // If image uploaded to Cloudinary, use the URL, otherwise use Multer path
-      userId,
+      cloudinaryImageUrl || profileImage, // Use the Cloudinary URL or Multer path
+      userId, // Associate the userId from the Users table
     ]);
 
-    res.status(201).json(result.rows[0]);
+    res.status(201).json(donorResult.rows[0]);  // Return the donor information with associated userId
   } catch (error) {
     console.error('Error creating donor:', error);
     res.status(500).json({ error: 'Server error' });
