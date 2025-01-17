@@ -1,7 +1,7 @@
-// routes/donorRoutes.js
 const express = require('express');
-const { query } = require('../db'); // Import your database query utility
-const { protectRoute } = require('./authRoutes');  // Import protectRoute middleware
+const { query } = require('../db');
+const { protectRoute } = require('./authRoutes');
+const upload = require('../utils/multer'); // Import Multer middleware
 const router = express.Router();
 
 // Get all donors
@@ -26,10 +26,13 @@ router.get('/', protectRoute, async (req, res) => {
 
 
 // Add a new donor
-router.post('/', protectRoute, async (req, res) => {
-  const { donorName, bloodType, profileImage, userId } = req.body;
+router.post('/', protectRoute, upload.single('profileImage'), async (req, res) => {
+  const { donorName, bloodType, userId } = req.body;
 
   try {
+    // Get the uploaded file URL from Cloudinary
+    const profileImage = req.file ? req.file.path : null;
+
     const insertQuery = `
       INSERT INTO Donors (donorName, bloodType, profileImage, userId)
       VALUES ($1, $2, $3, $4) RETURNING *;
